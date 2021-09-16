@@ -5,37 +5,32 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import org.wit.placemark.databinding.ActivityPlacemarkBinding
 import org.wit.placemark.models.PlacemarkModel
-import timber.log.Timber
 import timber.log.Timber.i
+import org.wit.placemark.main.MainApp
 
 
 class PlacemarkActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlacemarkBinding
     var placemark = PlacemarkModel()
+    lateinit var app: MainApp
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityPlacemarkBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        Timber.plant(Timber.DebugTree())
-
+        app = application as MainApp
         i("Placemark Activity started...")
-
-        val placemarks = ArrayList<PlacemarkModel>()
 
         binding.btnAdd.setOnClickListener() {
             placemark.title = binding.placemarkTitle.text.toString()
-            placemark.description = binding.placemarkDescription.text.toString()
+            placemark.description = binding.description.text.toString()
             if (placemark.title.isNotEmpty()) {
-                placemarks.add(placemark)
-                for(placemark in placemarks) {
-                    val title = placemark.title
-                    val description = placemark.description
-                    i("add Button Pressed: $title $description")
-                }
+                app.placemarks.add(placemark.copy())
+                i("add Button Pressed: ${placemark}")
+                for (i in app.placemarks.indices)
+                    { i("Placemark[$i]:${app.placemarks[i]}") }
             }
             else {
                 Snackbar

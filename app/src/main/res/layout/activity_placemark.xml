@@ -45,6 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_margin="8dp"
+                    android:autofillHints=""
                     android:hint="@string/hint_placemarkTitle"
                     android:inputType="text"
                     android:maxLength="25"
@@ -52,10 +53,11 @@
                     android:padding="8dp"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="14sp" />
+
                 <EditText
-                    android:id="@+id/placemarkDescription"
+                    android:id="@+id/description"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:hint="@string/hint_placemarkDescription"
                     android:inputType="text"
