@@ -1,12 +1,16 @@
 package org.wit.placemark.activities
 
 import android.os.Bundle
+import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import org.wit.placemark.R
 import org.wit.placemark.databinding.ActivityPlacemarkBinding
 import org.wit.placemark.models.PlacemarkModel
 import timber.log.Timber.i
 import org.wit.placemark.main.MainApp
+
+import android.view.MenuItem
 
 
 class PlacemarkActivity : AppCompatActivity() {
@@ -20,6 +24,10 @@ class PlacemarkActivity : AppCompatActivity() {
         binding = ActivityPlacemarkBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.toolbar.title = title
+        setSupportActionBar(binding.toolbar)
+
+
         app = application as MainApp
         i("Placemark Activity started...")
 
@@ -31,6 +39,8 @@ class PlacemarkActivity : AppCompatActivity() {
                 i("add Button Pressed: ${placemark}")
                 for (i in app.placemarks.indices)
                     { i("Placemark[$i]:${app.placemarks[i]}") }
+                setResult(RESULT_OK)
+                finish()
             }
             else {
                 Snackbar
@@ -38,5 +48,9 @@ class PlacemarkActivity : AppCompatActivity() {
                     .show()
             }
         }
+    }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_placemark, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 }
