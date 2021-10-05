@@ -2,12 +2,13 @@ package org.wit.placemark.main
 
 
 import android.app.Application
+import org.wit.placemark.models.PlacemarkMemStore
 import timber.log.Timber
 import timber.log.Timber.i
-import org.wit.placemark.models.PlacemarkModel
 
 class MainApp : Application() {
-    val placemarks = ArrayList<PlacemarkModel>()
+
+    val placemarks = PlacemarkMemStore()
 
     override fun onCreate() {
         super.onCreate()

@@ -7,7 +7,6 @@ import com.google.android.material.snackbar.Snackbar
 import org.wit.placemark.R
 import org.wit.placemark.databinding.ActivityPlacemarkBinding
 import org.wit.placemark.models.PlacemarkModel
-import timber.log.Timber.i
 import org.wit.placemark.main.MainApp
 
 import android.view.MenuItem
@@ -21,6 +20,9 @@ class PlacemarkActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        var edit = false
+
         binding = ActivityPlacemarkBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -29,22 +31,30 @@ class PlacemarkActivity : AppCompatActivity() {
 
 
         app = application as MainApp
-        i("Placemark Activity started...")
+
+        if (intent.hasExtra("placemark_edit")) {
+            edit = true
+            placemark = intent.extras?.getParcelable("placemark_edit")!!
+            binding.placemarkTitle.setText(placemark.title)
+            binding.description.setText(placemark.description)
+            binding.btnAdd.setText(R.string.button_savePlacemark)
+        }
 
         binding.btnAdd.setOnClickListener() {
             placemark.title = binding.placemarkTitle.text.toString()
             placemark.description = binding.description.text.toString()
             if (placemark.title.isNotEmpty()) {
-                app.placemarks.add(placemark.copy())
-                i("add Button Pressed: ${placemark}")
-                for (i in app.placemarks.indices)
-                    { i("Placemark[$i]:${app.placemarks[i]}") }
+                if(edit){
+                    app.placemarks.update(placemark.copy())
+                }else{
+                    app.placemarks.create(placemark.copy())
+                }
                 setResult(RESULT_OK)
                 finish()
             }
             else {
                 Snackbar
-                    .make(it,"Please Enter a title", Snackbar.LENGTH_LONG)
+                    .make(it,R.string.toast_enterTitle, Snackbar.LENGTH_LONG)
                     .show()
             }
         }
@@ -52,5 +62,13 @@ class PlacemarkActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_placemark, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.item_cancel -> {
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
