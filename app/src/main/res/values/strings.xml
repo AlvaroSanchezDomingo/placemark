@@ -12,4 +12,5 @@
     <string name="toast_enterTitle">Please Enter a title</string>
     <string name="select_placemark_image">Select placemark image</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="menu_deletePlacemark">Delete</string>
 </resources>

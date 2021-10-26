@@ -25,7 +25,7 @@ class PlacemarkListActivity : AppCompatActivity(), PlacemarkListener {
     private fun registerRefreshCallback() {
         refreshIntentLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult())
-            { binding.recyclerView.adapter?.notifyDataSetChanged() }
+            { loadPlacemarks() }
     }
 
 
@@ -39,11 +39,13 @@ class PlacemarkListActivity : AppCompatActivity(), PlacemarkListener {
 
         app = application as MainApp
 
-        registerRefreshCallback()
+
 
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
-        binding.recyclerView.adapter = PlacemarkAdapter(app.placemarks.findAll(), this)
+        loadPlacemarks()
+
+        registerRefreshCallback()
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -64,6 +66,15 @@ class PlacemarkListActivity : AppCompatActivity(), PlacemarkListener {
         val launcherIntent = Intent(this, PlacemarkActivity::class.java)
         launcherIntent.putExtra("placemark_edit", placemark)
         refreshIntentLauncher.launch(launcherIntent)
+    }
+
+    private fun loadPlacemarks() {
+        showPlacemarks(app.placemarks.findAll())
+    }
+
+    fun showPlacemarks (placemarks: List<PlacemarkModel>) {
+        binding.recyclerView.adapter = PlacemarkAdapter(placemarks, this)
+        binding.recyclerView.adapter?.notifyDataSetChanged()
     }
 }
 

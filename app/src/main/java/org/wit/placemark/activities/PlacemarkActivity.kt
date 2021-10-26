@@ -25,7 +25,6 @@ class PlacemarkActivity : AppCompatActivity() {
     private lateinit var imageIntentLauncher : ActivityResultLauncher<Intent>
     var placemark = PlacemarkModel()
     lateinit var app: MainApp
-    private var location = Location()
     private lateinit var mapIntentLauncher : ActivityResultLauncher<Intent>
 
     private fun registerMapCallback() {
@@ -36,8 +35,11 @@ class PlacemarkActivity : AppCompatActivity() {
                     RESULT_OK -> {
                         if (result.data != null) {
                             i("Got Location ${result.data.toString()}")
-                            location = result.data!!.extras?.getParcelable("location")!!
+                            val location = result.data!!.extras?.getParcelable<Location>("location")!!
                             i("Location == $location")
+                            placemark.lat = location.lat
+                            placemark.lng = location.lng
+                            placemark.zoom = location.zoom
                         } // end of if
                     }
                     RESULT_CANCELED -> { } else -> { }
@@ -118,7 +120,12 @@ class PlacemarkActivity : AppCompatActivity() {
         }
 
         binding.placemarkLocation.setOnClickListener {
-            location = Location(52.245696, -7.139102, 15f)
+            val location = Location(52.245696, -7.139102, 15f)
+            if(placemark.zoom != 0f){
+                location.lat = placemark.lat
+                location.lng = placemark.lng
+                location.zoom = placemark.zoom
+            }
             val launcherIntent = Intent(this, MapsActivity::class.java)
                 .putExtra("location", location)
             mapIntentLauncher.launch(launcherIntent)
@@ -132,6 +139,10 @@ class PlacemarkActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.item_cancel -> {
+                finish()
+            }
+            R.id.item_delete -> {
+                app.placemarks.delete(placemark.copy())
                 finish()
             }
         }
