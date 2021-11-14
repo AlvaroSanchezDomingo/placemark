@@ -26,6 +26,7 @@ class PlacemarkActivity : AppCompatActivity() {
     var placemark = PlacemarkModel()
     lateinit var app: MainApp
     private lateinit var mapIntentLauncher : ActivityResultLauncher<Intent>
+    var edit = false;
 
     private fun registerMapCallback() {
         mapIntentLauncher =
@@ -72,7 +73,6 @@ class PlacemarkActivity : AppCompatActivity() {
 
         registerImagePickerCallback()
         registerMapCallback()
-        var edit = false
 
         binding = ActivityPlacemarkBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -134,6 +134,7 @@ class PlacemarkActivity : AppCompatActivity() {
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_placemark, menu)
+        if (edit && menu != null) menu.getItem(0).setVisible(true)
         return super.onCreateOptionsMenu(menu)
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -142,7 +143,7 @@ class PlacemarkActivity : AppCompatActivity() {
                 finish()
             }
             R.id.item_delete -> {
-                app.placemarks.delete(placemark.copy())
+                app.placemarks.delete(placemark)
                 finish()
             }
         }
