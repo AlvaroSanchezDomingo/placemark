@@ -1,4 +1,4 @@
-package org.wit.placemark.views.placemarkmap
+package org.wit.placemark.views.map
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -10,14 +10,11 @@ import org.wit.placemark.databinding.ContentPlacemarkMapsBinding
 import org.wit.placemark.main.MainApp
 import org.wit.placemark.models.PlacemarkModel
 
-class PlacemarkMapsView : AppCompatActivity() , GoogleMap.OnMarkerClickListener{
+class PlacemarkMapView : AppCompatActivity() , GoogleMap.OnMarkerClickListener{
 
     private lateinit var binding: ActivityPlacemarkMapsBinding
     private lateinit var contentBinding: ContentPlacemarkMapsBinding
-
-    private lateinit var presenter: PlacemarkMapsPresenter
-
-    lateinit var map: GoogleMap
+    private lateinit var presenter: PlacemarkMapPresenter
     lateinit var app: MainApp
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,18 +26,17 @@ class PlacemarkMapsView : AppCompatActivity() , GoogleMap.OnMarkerClickListener{
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        presenter = PlacemarkMapsPresenter(this)
+        presenter = PlacemarkMapPresenter(this)
 
         contentBinding = ContentPlacemarkMapsBinding.bind(binding.root)
         contentBinding.mapView.onCreate(savedInstanceState)
         contentBinding.mapView.getMapAsync{
-            map = it
-            presenter.configureMap(map)
+            presenter.doPopulateMap(it)
         }
 
     }
 
-    fun showPlacemarkOnCard(placemark: PlacemarkModel) {
+    fun showPlacemark(placemark: PlacemarkModel) {
         contentBinding.currentTitle.text = placemark.title
         contentBinding.currentDescription.text = placemark.description
         Picasso.get()
@@ -50,7 +46,7 @@ class PlacemarkMapsView : AppCompatActivity() , GoogleMap.OnMarkerClickListener{
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        presenter.findPlacemarkById(marker)
+        presenter.doMarkerSelected(marker)
         return false
     }
 

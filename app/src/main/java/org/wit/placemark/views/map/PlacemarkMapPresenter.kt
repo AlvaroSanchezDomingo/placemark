@@ -1,4 +1,4 @@
-package org.wit.placemark.views.placemarkmap
+package org.wit.placemark.views.map
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -7,31 +7,29 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import org.wit.placemark.main.MainApp
 
-class PlacemarkMapsPresenter(private val view: PlacemarkMapsView) {
-    var app: MainApp = view.application as MainApp
+class PlacemarkMapPresenter(private val view: PlacemarkMapView) {
+    var app: MainApp
 
     init {
         app = view.application as MainApp
     }
 
 
-    fun configureMap(map: GoogleMap) {
+    fun doPopulateMap(map: GoogleMap) {
+        map.uiSettings.setZoomControlsEnabled(true)
         map.setOnMarkerClickListener(view)
-        map.uiSettings.isZoomControlsEnabled = true
-
-        app.placemarks.findAll().forEach{
+        app.placemarks.findAll().forEach {
             val loc = LatLng(it.lat, it.lng)
             val options = MarkerOptions().title(it.title).position(loc)
-            map.addMarker(options).tag = it.id
+            map.addMarker(options)?.tag = it.id
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, it.zoom))
         }
     }
 
-    fun findPlacemarkById(marker: Marker) {
+    fun doMarkerSelected(marker: Marker) {
         val tag = marker.tag as Long
         val placemark = app.placemarks.findById(tag)
-        view.showPlacemarkOnCard(placemark!!)
-
+        if (placemark != null) view.showPlacemark(placemark)
     }
 
 

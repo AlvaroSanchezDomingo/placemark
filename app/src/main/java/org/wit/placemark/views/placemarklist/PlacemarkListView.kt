@@ -11,6 +11,7 @@ import org.wit.placemark.databinding.ActivityPlacemarkListBinding
 import org.wit.placemark.main.MainApp
 import org.wit.placemark.models.PlacemarkModel
 import org.wit.placemark.views.placemarklist.PlacemarkListPresenter
+import timber.log.Timber.i
 
 class PlacemarkListView : AppCompatActivity(), PlacemarkListener {
 
@@ -55,4 +56,12 @@ class PlacemarkListView : AppCompatActivity(), PlacemarkListener {
         binding.recyclerView.adapter = PlacemarkAdapter(presenter.getPlacemarks(), this)
         binding.recyclerView.adapter?.notifyDataSetChanged()
     }
+
+    override fun onResume() {
+        //update the view
+        binding.recyclerView.adapter?.notifyDataSetChanged()
+        i("recyclerView onResume")
+        super.onResume()
+    }
+
 }
