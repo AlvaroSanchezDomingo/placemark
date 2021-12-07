@@ -7,15 +7,14 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import org.wit.placemark.main.MainApp
 
-class PlacemarkMapPresenter(private val view: PlacemarkMapView) {
+class PlacemarkMapPresenter(val view: PlacemarkMapView) {
     var app: MainApp
 
     init {
         app = view.application as MainApp
     }
 
-
-    fun doPopulateMap(map: GoogleMap) {
+    suspend fun doPopulateMap(map: GoogleMap) {
         map.uiSettings.setZoomControlsEnabled(true)
         map.setOnMarkerClickListener(view)
         app.placemarks.findAll().forEach {
@@ -26,13 +25,9 @@ class PlacemarkMapPresenter(private val view: PlacemarkMapView) {
         }
     }
 
-    fun doMarkerSelected(marker: Marker) {
+    suspend fun doMarkerSelected(marker: Marker) {
         val tag = marker.tag as Long
         val placemark = app.placemarks.findById(tag)
         if (placemark != null) view.showPlacemark(placemark)
     }
-
-
-
-
 }

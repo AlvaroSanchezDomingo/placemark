@@ -4,13 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="org.wit.placemark.views.map.PlacemarkMapView"
-    tools:showIn="@layout/activity_placemark_maps">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
         android:layout_width="380dp"
         android:layout_height="150dp"
         android:layout_marginStart="8dp"
@@ -22,7 +19,7 @@
         app:layout_constraintHorizontal_bias="0.733"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapView"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintVertical_bias="1.0" >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -69,14 +66,13 @@
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="372dp"
+        android:layout_height="467dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.478"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

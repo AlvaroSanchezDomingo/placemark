@@ -15,27 +15,27 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import org.wit.placemark.helpers.checkLocationPermissions
 import org.wit.placemark.helpers.createDefaultLocationRequest
-import org.wit.placemark.helpers.showImagePicker
 import org.wit.placemark.main.MainApp
 import org.wit.placemark.models.Location
 import org.wit.placemark.models.PlacemarkModel
-import org.wit.placemark.views.editlocation.EditLocationView
-
-
+import org.wit.placemark.showImagePicker
+import org.wit.placemark.views.location.EditLocationView
 import timber.log.Timber
 import timber.log.Timber.i
 
 class PlacemarkPresenter(private val view: PlacemarkView) {
+    private val locationRequest = createDefaultLocationRequest()
     var map: GoogleMap? = null
     var placemark = PlacemarkModel()
     var app: MainApp = view.application as MainApp
+    //location service
     var locationService: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(view)
     private lateinit var imageIntentLauncher : ActivityResultLauncher<Intent>
     private lateinit var mapIntentLauncher : ActivityResultLauncher<Intent>
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     var edit = false;
     private val location = Location(52.245696, -7.139102, 15f)
-    val locationRequest = createDefaultLocationRequest()
+
     init {
 
         doPermissionLauncher()
@@ -59,7 +59,7 @@ class PlacemarkPresenter(private val view: PlacemarkView) {
     }
 
 
-    fun doAddOrSave(title: String, description: String) {
+    suspend fun doAddOrSave(title: String, description: String) {
         placemark.title = title
         placemark.description = description
         if (edit) {
@@ -77,7 +77,7 @@ class PlacemarkPresenter(private val view: PlacemarkView) {
 
     }
 
-    fun doDelete() {
+    suspend fun doDelete() {
         app.placemarks.delete(placemark)
         view.finish()
 
@@ -99,13 +99,21 @@ class PlacemarkPresenter(private val view: PlacemarkView) {
             .putExtra("location", location)
         mapIntentLauncher.launch(launcherIntent)
     }
+
+    @SuppressLint("MissingPermission")
+    fun doSetCurrentLocation() {
+
+        locationService.lastLocation.addOnSuccessListener {
+            locationUpdate(it.latitude, it.longitude)
+        }
+    }
+
     @SuppressLint("MissingPermission")
     fun doRestartLocationUpdates() {
         var locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 if (locationResult != null && locationResult.locations != null) {
                     val l = locationResult.locations.last()
-                    cachePlacemark(view.placemark.title, view.placemark.description)
                     locationUpdate(l.latitude, l.longitude)
                 }
             }
@@ -113,18 +121,6 @@ class PlacemarkPresenter(private val view: PlacemarkView) {
         if (!edit) {
             locationService.requestLocationUpdates(locationRequest, locationCallback, null)
         }
-    }
-    @SuppressLint("MissingPermission")
-    fun doSetCurrentLocation() {
-        i("setting location from doSetLocation")
-        locationService.lastLocation.addOnSuccessListener {
-            locationUpdate(it.latitude, it.longitude)
-        }
-    }
-
-    fun cachePlacemark (title: String, description: String) {
-        placemark.title = title;
-        placemark.description = description
     }
     fun doConfigureMap(m: GoogleMap) {
         map = m
@@ -140,11 +136,13 @@ class PlacemarkPresenter(private val view: PlacemarkView) {
         val options = MarkerOptions().title(placemark.title).position(LatLng(placemark.lat, placemark.lng))
         map?.addMarker(options)
         map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(placemark.lat, placemark.lng), placemark.zoom))
-        view.locationUpdate(placemark)
-
+        view.showPlacemark(placemark)
     }
 
-
+    fun cachePlacemark (title: String, description: String) {
+        placemark.title = title;
+        placemark.description = description
+    }
 
     private fun registerImagePickerCallback() {
 
@@ -185,16 +183,17 @@ class PlacemarkPresenter(private val view: PlacemarkView) {
 
             }
     }
+
     private fun doPermissionLauncher() {
         i("permission check called")
         requestPermissionLauncher =
-            view.registerForActivityResult(ActivityResultContracts.RequestPermission())
-            { isGranted: Boolean ->
-                if (isGranted) {
-                    doSetCurrentLocation()
-                } else {
-                    locationUpdate(location.lat, location.lng)
-                }
+        view.registerForActivityResult(ActivityResultContracts.RequestPermission())
+        { isGranted: Boolean ->
+            if (isGranted) {
+                doSetCurrentLocation()
+            } else {
+                locationUpdate(location.lat, location.lng)
             }
+        }
     }
 }

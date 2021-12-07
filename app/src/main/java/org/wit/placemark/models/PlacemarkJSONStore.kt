@@ -29,24 +29,21 @@ class PlacemarkJSONStore(private val context: Context) : PlacemarkStore {
         }
     }
 
-    override fun findAll(): MutableList<PlacemarkModel> {
+    override suspend fun findAll(): MutableList<PlacemarkModel> {
         logAll()
         return placemarks
     }
 
-    override fun findById(id: Long): PlacemarkModel? {
-        val foundPlacemark: PlacemarkModel? = placemarks.find { it.id == id }
-        return foundPlacemark
-    }
-    override fun create(placemark: PlacemarkModel) {
+    override suspend fun create(placemark: PlacemarkModel) {
         placemark.id = generateRandomId()
         placemarks.add(placemark)
         serialize()
     }
 
 
-    override fun update(placemark: PlacemarkModel) {
-        var foundPlacemark: PlacemarkModel? = placemarks.find { p -> p.id == placemark.id }
+    override suspend fun update(placemark: PlacemarkModel) {
+        val placemarksList = findAll() as ArrayList<PlacemarkModel>
+        var foundPlacemark: PlacemarkModel? = placemarksList.find { p -> p.id == placemark.id }
         if (foundPlacemark != null) {
             foundPlacemark.title = placemark.title
             foundPlacemark.description = placemark.description
@@ -54,14 +51,18 @@ class PlacemarkJSONStore(private val context: Context) : PlacemarkStore {
             foundPlacemark.lat = placemark.lat
             foundPlacemark.lng = placemark.lng
             foundPlacemark.zoom = placemark.zoom
-            serialize()
-            logAll()
         }
+        serialize()
     }
-    override fun delete(placemark: PlacemarkModel) {
+
+    override suspend fun delete(placemark: PlacemarkModel) {
         val foundPlacemark: PlacemarkModel? = placemarks.find { it.id == placemark.id }
         placemarks.remove(foundPlacemark)
         serialize()
+    }
+    override suspend fun findById(id:Long) : PlacemarkModel? {
+        val foundPlacemark: PlacemarkModel? = placemarks.find { it.id == id }
+        return foundPlacemark
     }
 
     private fun serialize() {
@@ -96,4 +97,3 @@ class UriParser : JsonDeserializer<Uri>,JsonSerializer<Uri> {
         return JsonPrimitive(src.toString())
     }
 }
-

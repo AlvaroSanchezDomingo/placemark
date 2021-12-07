@@ -15,16 +15,18 @@
         android:theme="@style/Theme.Placemark">
         <activity
             android:name=".views.map.PlacemarkMapView"
-            android:label="@string/title_activity_placemark_maps"/>
+            android:exported="true"
+            android:label="@string/title_activity_placemark_maps"
+            android:theme="@style/Theme.Placemark.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".views.editlocation.EditLocationView"
+            android:name=".views.location.EditLocationView"
             android:exported="true"
-            android:label="@string/title_activity_maps" />
+            android:label="@string/title_activity_map" />
         <activity
             android:name=".views.placemarklist.PlacemarkListView"
             android:exported="true">
