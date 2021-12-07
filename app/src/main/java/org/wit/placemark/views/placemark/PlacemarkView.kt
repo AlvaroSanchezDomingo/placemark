@@ -13,6 +13,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.wit.placemark.R
 import org.wit.placemark.databinding.ActivityPlacemarkBinding
+import org.wit.placemark.models.Location
 import org.wit.placemark.models.PlacemarkModel
 import timber.log.Timber.i
 
@@ -103,9 +104,11 @@ class PlacemarkView : AppCompatActivity() {
         if (placemark.image != Uri.EMPTY) {
             binding.chooseImage.setText(R.string.change_placemark_image)
         }
-        binding.lat.setText("%.6f".format(placemark.lat))
-        binding.lng.setText("%.6f".format(placemark.lng))
-
+        this.showLocation(placemark.location)
+    }
+     private fun showLocation (loc: Location){
+        binding.lat.setText("%.6f".format(loc.lat))
+        binding.lng.setText("%.6f".format(loc.lng))
     }
 
     fun updateImage(image: Uri){

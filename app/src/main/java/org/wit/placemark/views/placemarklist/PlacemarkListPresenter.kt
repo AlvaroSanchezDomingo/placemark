@@ -8,10 +8,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.wit.placemark.main.MainApp
 import org.wit.placemark.models.PlacemarkModel
+import org.wit.placemark.views.login.LoginView
 import org.wit.placemark.views.placemark.PlacemarkView
 import org.wit.placemark.views.map.PlacemarkMapView
 
-class PlacemarkListPresenter(val view: PlacemarkListView) {
+class PlacemarkListPresenter(private val view: PlacemarkListView) {
 
     var app: MainApp = view.application as MainApp
     private lateinit var refreshIntentLauncher : ActivityResultLauncher<Intent>
@@ -37,6 +38,10 @@ class PlacemarkListPresenter(val view: PlacemarkListView) {
 
     fun doShowPlacemarksMap() {
         val launcherIntent = Intent(view, PlacemarkMapView::class.java)
+        editIntentLauncher.launch(launcherIntent)
+    }
+    fun doLogout(){
+        val launcherIntent = Intent(view, LoginView::class.java)
         editIntentLauncher.launch(launcherIntent)
     }
     private fun registerRefreshCallback() {

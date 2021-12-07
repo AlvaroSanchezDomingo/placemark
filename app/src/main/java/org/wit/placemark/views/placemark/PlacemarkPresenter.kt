@@ -52,8 +52,8 @@ class PlacemarkPresenter(private val view: PlacemarkView) {
             if (checkLocationPermissions(view)) {
                 doSetCurrentLocation()
             }
-            placemark.lat = location.lat
-            placemark.lng = location.lng
+            placemark.location.lat = location.lat
+            placemark.location.lng = location.lng
         }
 
     }
@@ -89,11 +89,12 @@ class PlacemarkPresenter(private val view: PlacemarkView) {
 
     fun doSetLocation() {
 
-        if (placemark.zoom != 0f) {
-            location.lat =  placemark.lat
-            location.lng = placemark.lng
-            location.zoom = placemark.zoom
-            locationUpdate(placemark.lat, placemark.lng)
+        if (placemark.location.zoom != 0f) {
+
+            location.lat =  placemark.location.lat
+            location.lng = placemark.location.lng
+            location.zoom = placemark.location.zoom
+            locationUpdate(placemark.location.lat, placemark.location.lng)
         }
         val launcherIntent = Intent(view, EditLocationView::class.java)
             .putExtra("location", location)
@@ -124,18 +125,16 @@ class PlacemarkPresenter(private val view: PlacemarkView) {
     }
     fun doConfigureMap(m: GoogleMap) {
         map = m
-        locationUpdate(placemark.lat, placemark.lng)
+        locationUpdate(placemark.location.lat, placemark.location.lng)
     }
 
     fun locationUpdate(lat: Double, lng: Double) {
-        placemark.lat = lat
-        placemark.lng = lng
-        placemark.zoom = 15f
+        placemark.location = location
         map?.clear()
         map?.uiSettings?.setZoomControlsEnabled(true)
-        val options = MarkerOptions().title(placemark.title).position(LatLng(placemark.lat, placemark.lng))
+        val options = MarkerOptions().title(placemark.title).position(LatLng(placemark.location.lat, placemark.location.lng))
         map?.addMarker(options)
-        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(placemark.lat, placemark.lng), placemark.zoom))
+        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(placemark.location.lat, placemark.location.lng), placemark.location.zoom))
         view.showPlacemark(placemark)
     }
 
@@ -173,9 +172,7 @@ class PlacemarkPresenter(private val view: PlacemarkView) {
                             Timber.i("Got Location ${result.data.toString()}")
                             val location = result.data!!.extras?.getParcelable<Location>("location")!!
                             Timber.i("Location == $location")
-                            placemark.lat = location.lat
-                            placemark.lng = location.lng
-                            placemark.zoom = location.zoom
+                            placemark.location = location
                         } // end of if
                     }
                     AppCompatActivity.RESULT_CANCELED -> { } else -> { }
