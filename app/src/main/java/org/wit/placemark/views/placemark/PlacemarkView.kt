@@ -97,13 +97,13 @@ class PlacemarkView : AppCompatActivity() {
         if (binding.placemarkTitle.text.isEmpty()) binding.placemarkTitle.setText(placemark.title)
         if (binding.description.text.isEmpty())  binding.description.setText(placemark.description)
 
+        if (placemark.image != "") {
         Picasso.get()
             .load(placemark.image)
             .into(binding.placemarkImage)
 
-        if (placemark.image != Uri.EMPTY) {
-            binding.chooseImage.setText(R.string.change_placemark_image)
-        }
+          binding.chooseImage.setText(R.string.change_placemark_image)
+       }
         this.showLocation(placemark.location)
     }
      private fun showLocation (loc: Location){
@@ -111,7 +111,7 @@ class PlacemarkView : AppCompatActivity() {
         binding.lng.setText("%.6f".format(loc.lng))
     }
 
-    fun updateImage(image: Uri){
+    fun updateImage(image: String){
         i("Image updated")
         Picasso.get()
             .load(image)

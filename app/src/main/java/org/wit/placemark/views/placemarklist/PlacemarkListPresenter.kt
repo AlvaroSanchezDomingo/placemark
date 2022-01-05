@@ -3,6 +3,7 @@ package org.wit.placemark.views.placemarklist
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -40,10 +41,14 @@ class PlacemarkListPresenter(private val view: PlacemarkListView) {
         val launcherIntent = Intent(view, PlacemarkMapView::class.java)
         editIntentLauncher.launch(launcherIntent)
     }
-    fun doLogout(){
+
+    suspend fun doLogout(){
+        FirebaseAuth.getInstance().signOut()
+        app.placemarks.clear()
         val launcherIntent = Intent(view, LoginView::class.java)
         editIntentLauncher.launch(launcherIntent)
     }
+
     private fun registerRefreshCallback() {
         refreshIntentLauncher =
             view.registerForActivityResult(ActivityResultContracts.StartActivityForResult())

@@ -6,4 +6,5 @@ interface PlacemarkStore {
     suspend fun update(placemark: PlacemarkModel)
     suspend fun findById(id:Long) : PlacemarkModel?
     suspend fun delete(placemark: PlacemarkModel)
+    suspend fun clear()
 }

@@ -44,4 +44,7 @@ class PlacemarkMemStore : PlacemarkStore {
         val foundPlacemark: PlacemarkModel? = placemarks.find { it.id == id }
         return foundPlacemark
     }
+    override suspend fun clear(){
+        placemarks.clear()
+    }
 }

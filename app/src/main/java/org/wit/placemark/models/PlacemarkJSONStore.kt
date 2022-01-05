@@ -76,6 +76,9 @@ class PlacemarkJSONStore(private val context: Context) : PlacemarkStore {
     private fun logAll() {
         placemarks.forEach { Timber.i("$it") }
     }
+    override suspend fun clear(){
+        placemarks.clear()
+    }
 }
 
 class UriParser : JsonDeserializer<Uri>,JsonSerializer<Uri> {

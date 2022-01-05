@@ -4,6 +4,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
 import org.wit.placemark.R
 import org.wit.placemark.adapters.PlacemarkAdapter
@@ -24,8 +25,15 @@ class PlacemarkListView : AppCompatActivity(), PlacemarkListener {
         super.onCreate(savedInstanceState)
         binding = ActivityPlacemarkListBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //update Toolbar title
         binding.toolbar.title = title
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            binding.toolbar.title = "${title}: ${user.email}"
+        }
         setSupportActionBar(binding.toolbar)
+
         presenter = PlacemarkListPresenter(this)
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
@@ -51,7 +59,11 @@ class PlacemarkListView : AppCompatActivity(), PlacemarkListener {
         when (item.itemId) {
             R.id.item_add -> { presenter.doAddPlacemark() }
             R.id.item_map -> { presenter.doShowPlacemarksMap() }
-            R.id.item_logout -> { presenter.doLogout() }
+            R.id.item_logout -> {
+                GlobalScope.launch(Dispatchers.IO) {
+                    presenter.doLogout()
+                }
+            }
         }
         return super.onOptionsItemSelected(item)
     }
